@@ -5,10 +5,6 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$HOME/.config/kanata"
 CONFIG_FILE="$CONFIG_DIR/kanata.kbd"
 SRC_FILE="$REPO_DIR/kanata.kbd"
-
-# Kanata v1.12.0 (Homebrew stable) requires DriverKit v6.2.0 (Protocol 5)
-DRIVER_PKG_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v6.2.0/Karabiner-DriverKit-VirtualHIDDevice-6.2.0.pkg"
-PKG_TMP="/tmp/Karabiner-DriverKit-VirtualHIDDevice-6.2.0.pkg"
 DAEMON_PLIST="/Library/LaunchDaemons/org.pqrs.karabiner.driverkit-virtualhiddevice.plist"
 LOCAL_PLIST="$REPO_DIR/org.pqrs.karabiner.driverkit-virtualhiddevice.plist"
 
@@ -26,36 +22,57 @@ fi
 if ! command -v kanata >/dev/null 2>&1; then
     echo "📦 Installing Kanata via Homebrew..."
     brew install kanata
-else
-    echo "✅ Kanata is installed: $(kanata --version)"
 fi
 
-# 2. Download and install matching DriverKit v6.2.0 package
-echo ""
-echo "🔍 Downloading matching Karabiner DriverKit v6.2.0 for Kanata..."
-curl -sL "$DRIVER_PKG_URL" -o "$PKG_TMP"
+KANATA_VERSION_STR=$(kanata --version 2>/dev/null || echo "kanata 1.12.0")
+KANATA_VERSION=$(echo "$KANATA_VERSION_STR" | awk '{print $2}')
+echo "✅ Kanata installed: version $KANATA_VERSION"
 
-echo "📦 Installing DriverKit v6.2.0 package (sudo required)..."
+# 2. Determine matching DriverKit version based on Kanata version protocol
+# Kanata >= 1.13.0 uses Protocol 7 (DriverKit v8.x)
+# Kanata <  1.13.0 uses Protocol 5 (DriverKit v6.2.0)
+MAJOR=$(echo "$KANATA_VERSION" | cut -d. -f1)
+MINOR=$(echo "$KANATA_VERSION" | cut -d. -f2)
+
+if [ "$MAJOR" -gt 1 ] || { [ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 13 ]; }; then
+    DRIVER_VER="8.2.0"
+    DRIVER_PKG_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v8.2.0/Karabiner-DriverKit-VirtualHIDDevice-8.2.0.pkg"
+else
+    DRIVER_VER="6.2.0"
+    DRIVER_PKG_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v6.2.0/Karabiner-DriverKit-VirtualHIDDevice-6.2.0.pkg"
+fi
+
+PKG_TMP="/tmp/Karabiner-DriverKit-VirtualHIDDevice-${DRIVER_VER}.pkg"
+echo "🎯 Matching Karabiner DriverKit version: v${DRIVER_VER}"
+
+# 3. Download and install driver package
+if [ ! -f "$PKG_TMP" ]; then
+    echo "📦 Downloading Karabiner DriverKit v${DRIVER_VER}..."
+    curl -sL "$DRIVER_PKG_URL" -o "$PKG_TMP"
+fi
+
+echo "📦 Installing DriverKit v${DRIVER_VER} (sudo required)..."
 sudo installer -pkg "$PKG_TMP" -target /
 
-# 3. Clean stale socket files & reset ownership
+# 4. Clean stale socket files & reset ownership
 echo ""
-echo "🧹 Purging stale socket files & resetting root:wheel ownership..."
+echo "🧹 Resetting socket directory with root:wheel ownership..."
 sudo rm -rf "/Library/Application Support/org.pqrs/tmp" || true
 sudo mkdir -p "/Library/Application Support/org.pqrs"
 sudo chown -R root:wheel "/Library/Application Support/org.pqrs"
 sudo chmod 755 "/Library/Application Support/org.pqrs"
 sudo killall -9 Karabiner-VirtualHIDDevice-Daemon 2>/dev/null || true
 
-# 4. Force activate DriverKit v6.2.0
+# 5. Activate DriverKit
 echo ""
 echo "🚀 Activating Virtual HID Manager..."
 if [ -f "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" ]; then
-    sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" forceActivate || true
+    sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" forceActivate 2>/dev/null || \
+    sudo "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate || true
     echo "✅ VirtualHIDDevice activated."
 fi
 
-# 5. Setup LaunchDaemon for VirtualHIDDevice-Daemon
+# 6. Setup LaunchDaemon for VirtualHIDDevice-Daemon
 echo ""
 echo "⚙️  Configuring LaunchDaemon for VirtualHIDDevice service..."
 sudo cp "$LOCAL_PLIST" "$DAEMON_PLIST"
@@ -65,19 +82,19 @@ sudo launchctl bootout system "$DAEMON_PLIST" 2>/dev/null || true
 sudo launchctl bootstrap system "$DAEMON_PLIST" 2>/dev/null || sudo launchctl load "$DAEMON_PLIST" 2>/dev/null || true
 echo "✅ LaunchDaemon registered."
 
-# 6. Symlink Config
+# 7. Symlink Config
 echo ""
 echo "🔗 Setting up configuration symlink..."
 mkdir -p "$CONFIG_DIR"
 ln -sf "$SRC_FILE" "$CONFIG_FILE"
 echo "   $SRC_FILE -> $CONFIG_FILE"
 
-# 7. Restart Kanata background service
+# 8. Restart Kanata background service
 echo ""
 echo "🔄 Restarting Kanata service..."
 sudo brew services restart kanata
 
-# 8. Validate Syntax
+# 9. Validate Syntax
 echo ""
 echo "🧪 Validating Kanata configuration syntax..."
 kanata --check -c "$CONFIG_FILE"
@@ -87,5 +104,5 @@ echo ""
 echo "========================================================"
 echo "                  SETUP COMPLETE                        "
 echo "========================================================"
-echo "DriverKit v6.2.0 installed and Kanata restarted!"
+echo "Kanata is running with DriverKit v${DRIVER_VER}."
 echo "========================================================"
