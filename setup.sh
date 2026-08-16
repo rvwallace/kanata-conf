@@ -29,21 +29,24 @@ KANATA_VERSION=$(echo "$KANATA_VERSION_STR" | awk '{print $2}')
 echo "✅ Kanata installed: version $KANATA_VERSION"
 
 # 2. Determine matching DriverKit version based on Kanata version protocol
-# Kanata >= 1.13.0 uses Protocol 7 (DriverKit v8.x)
-# Kanata <  1.13.0 uses Protocol 5 (DriverKit v6.2.0)
+# Official Kanata Docs Reference: https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md
+# - Kanata >= 1.13.0 uses karabiner-driverkit v0.4.0 (Protocol 7) -> requires DriverKit v8.0.0 / v8.2.0+
+# - Kanata <  1.13.0 uses karabiner-driverkit v0.3.x (Protocol 5) -> requires DriverKit v6.2.0
 MAJOR=$(echo "$KANATA_VERSION" | cut -d. -f1)
 MINOR=$(echo "$KANATA_VERSION" | cut -d. -f2)
 
 if [ "$MAJOR" -gt 1 ] || { [ "$MAJOR" -eq 1 ] && [ "$MINOR" -ge 13 ]; }; then
     DRIVER_VER="8.2.0"
+    PROTOCOL="7"
     DRIVER_PKG_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v8.2.0/Karabiner-DriverKit-VirtualHIDDevice-8.2.0.pkg"
 else
     DRIVER_VER="6.2.0"
+    PROTOCOL="5"
     DRIVER_PKG_URL="https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v6.2.0/Karabiner-DriverKit-VirtualHIDDevice-6.2.0.pkg"
 fi
 
 PKG_TMP="/tmp/Karabiner-DriverKit-VirtualHIDDevice-${DRIVER_VER}.pkg"
-echo "🎯 Matching Karabiner DriverKit version: v${DRIVER_VER}"
+echo "🎯 Matching Karabiner DriverKit: v${DRIVER_VER} (Protocol ${PROTOCOL} for Kanata v${KANATA_VERSION})"
 
 # 3. Download and install driver package
 if [ ! -f "$PKG_TMP" ]; then
