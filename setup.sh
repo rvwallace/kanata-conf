@@ -26,20 +26,16 @@ else
     echo "✅ Kanata is already installed: $(kanata --version)"
 fi
 
-# 3. Check / Install Karabiner Virtual Driver
+# 3. Check / Install & Activate Karabiner Virtual Driver
 echo ""
-echo "🔍 Checking Karabiner DriverKit driver..."
-if [ ! -d "/Library/Application Support/org.pqrs" ] && [ ! -d "/Applications/Karabiner-Elements.app" ]; then
+echo "🔍 Checking and activating Karabiner DriverKit driver..."
+if [ -f "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" ]; then
+    "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" activate || true
+    echo "✅ Karabiner VirtualHIDDevice driver activated."
+elif [ ! -d "/Library/Application Support/org.pqrs" ] && [ ! -d "/Applications/Karabiner-Elements.app" ]; then
     echo "⚠️  Karabiner driver not found."
-    echo "   Kanata requires the virtual HID driver to intercept and emit keystrokes on macOS."
-    echo "   Installing Karabiner-Elements cask (requires sudo password)..."
-    brew install --cask karabiner-elements || {
-        echo ""
-        echo "⚠️  If the installer asked for sudo password or failed, please run:"
-        echo "    brew install --cask karabiner-elements"
-    }
-else
-    echo "✅ Karabiner driver/app is installed."
+    echo "   Installing Karabiner-Elements cask..."
+    brew install --cask karabiner-elements || true
 fi
 
 # 4. Symlink Config
