@@ -96,7 +96,7 @@ make install
 ## 🛠️ Daily Workflow Commands
 
 ```bash
-# Test changes live with auto-reloading as you edit kanata.kbd
+# Test in foreground with live layer change logging (Ctrl+C to exit)
 make test
 
 # Start background service on boot
