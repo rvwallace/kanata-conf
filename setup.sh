@@ -40,8 +40,11 @@ fi
 echo "📦 Installing driver package (sudo required)..."
 sudo installer -pkg "$PKG_TMP" -target /
 
-echo "🧹 Cleaning up stale socket files..."
+echo "🧹 Fixing permissions and ownership to root:wheel..."
 sudo rm -rf "/Library/Application Support/org.pqrs/tmp" || true
+sudo mkdir -p "/Library/Application Support/org.pqrs"
+sudo chown -R root:wheel "/Library/Application Support/org.pqrs"
+sudo chmod 755 "/Library/Application Support/org.pqrs"
 sudo killall -9 Karabiner-VirtualHIDDevice-Daemon 2>/dev/null || true
 
 # 4. Activate Virtual Driver
@@ -69,7 +72,12 @@ mkdir -p "$CONFIG_DIR"
 ln -sf "$SRC_FILE" "$CONFIG_FILE"
 echo "   $SRC_FILE -> $CONFIG_FILE"
 
-# 7. Validate Syntax
+# 7. Restart Kanata service
+echo ""
+echo "🔄 Restarting Kanata background service..."
+sudo brew services restart kanata
+
+# 8. Validate Syntax
 echo ""
 echo "🧪 Validating Kanata configuration syntax..."
 kanata --check -c "$CONFIG_FILE"
@@ -79,6 +87,5 @@ echo ""
 echo "========================================================"
 echo "                  SETUP COMPLETE                        "
 echo "========================================================"
-echo "Run live test:"
-echo "     make test"
+echo "Kanata is running! Test your keys on MacBook or NuPhy."
 echo "========================================================"
