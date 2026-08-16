@@ -1,0 +1,89 @@
+;; =============================================================================
+;; Ultimate Kanata Layout for MacBook & NuPhy Air75
+;; Repo: ~/silentcastle/projects/kanata-conf
+;; =============================================================================
+
+(defcfg
+  ;; Process unmapped keys so normal typing remains unaffected
+  process-unmapped-keys yes
+)
+
+;; -----------------------------------------------------------------------------
+;; 1. Source Keys (Physical layout to intercept)
+;; -----------------------------------------------------------------------------
+(defsrc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lalt lmet           spc            rmet ralt
+)
+
+;; -----------------------------------------------------------------------------
+;; 2. Aliases for Tap-Hold Actions, Layers, and Shifted Symbols
+;; -----------------------------------------------------------------------------
+(defalias
+  ;; Caps Lock: Tap for Escape, Hold for Navigation Layer
+  nav (tap-hold 180 180 esc (layer-toggle nav))
+
+  ;; Tab: Tap for Tab, Hold for Hyper Key (Cmd + Option + Ctrl + Shift)
+  hyp (tap-hold 200 200 tab (multi lmet lalt lctl lsft))
+
+  ;; Space: Tap for Space, Hold for Numpad & Symbols Layer
+  spc-num (tap-hold-press 200 200 spc (layer-toggle num))
+
+  ;; Symbol Aliases
+  excl S-1
+  at   S-2
+  hash S-3
+  dllr S-4
+  prct S-5
+  crt  S-6
+  amp  S-7
+  astr S-8
+  lprn S-9
+  rprn S-0
+  plus S-=
+  tild S-grv
+  pipe S-\
+)
+
+;; -----------------------------------------------------------------------------
+;; 3. Base Layer (Default typing layer)
+;; -----------------------------------------------------------------------------
+(deflayer base
+  grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  @hyp  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @nav  a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft  z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl  lalt lmet          @spc-num       rmet ralt
+)
+
+;; -----------------------------------------------------------------------------
+;; 4. Navigation Layer (Active while holding Caps Lock)
+;; -----------------------------------------------------------------------------
+;; - HJKL: Vim-style arrow navigation
+;; - YUIO: Home, PgDn, PgUp, End
+;; - Backspace: Forward Delete
+;; - ASDF: Left-hand modifiers (Cmd, Alt, Shift, Ctrl) for easy text selection
+(deflayer nav
+  _     _    _    _    _    _    _    _    _    _    _    _    _    del
+  _     _    _    _    _    _    home pgdn pgup end  _    _    _    _
+  _     lmet lalt lsft lctl _    left down up   rght _    _    _
+  _     _    _    _    _    _    _    _    _    _    _    _
+  _     _    _              _              _    _
+)
+
+;; -----------------------------------------------------------------------------
+;; 5. Numpad & Symbols Layer (Active while holding Space)
+;; -----------------------------------------------------------------------------
+;; - Right Hand: 10-key numeric keypad (789 on UIO, 456 on JKL, 123 on M,, 0 on N)
+;; - Right Edge: Math operators (+ on P, - on [, * on ;, / on ', = on Enter)
+;; - Left Hand: Common programming symbols (!@#$% on QWERT, ^&*() on ASDFG, ~`[] on ZXCV)
+(deflayer num
+  _     _      _    _     _     _     _    _    _    _    _     _    _    _
+  _     @excl  @at  @hash @dllr @prct _    7    8    9    @plus -    _    _
+  _     @crt   @amp @astr @lprn @rprn _    4    5    6    @astr /    =
+  _     @tild  grv  [     ]     @pipe 0    1    2    3    .     _
+  _     _      _                _               _    _
+)
