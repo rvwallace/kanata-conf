@@ -27,15 +27,16 @@ else
     echo "✅ Kanata is installed: $(kanata --version)"
 fi
 
-# 3. Check / Install Standalone VirtualHIDDevice Driver
+# 3. Download & Install Standalone VirtualHIDDevice Driver
 echo ""
-echo "🔍 Checking Standalone Karabiner DriverKit VirtualHIDDevice driver..."
-if [ ! -d "/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice" ] || [ ! -f "/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager" ]; then
-    echo "📦 Downloading standalone VirtualHIDDevice driver..."
+echo "🔍 Installing Standalone Karabiner DriverKit VirtualHIDDevice driver..."
+if [ ! -f "$PKG_TMP" ]; then
+    echo "📦 Downloading driver package..."
     curl -sL "$DRIVER_PKG_URL" -o "$PKG_TMP"
-    echo "⚠️  Installing driver package (requires sudo password in terminal)..."
-    sudo installer -pkg "$PKG_TMP" -target /
 fi
+
+echo "📦 Installing driver package (sudo required)..."
+sudo installer -pkg "$PKG_TMP" -target /
 
 # 4. Activate Virtual Driver
 echo ""
@@ -60,15 +61,8 @@ echo "✅ Configuration syntax is valid!"
 
 echo ""
 echo "========================================================"
-echo "                       NEXT STEPS                       "
+echo "                  SETUP COMPLETE                        "
 echo "========================================================"
-echo "1. If Karabiner-Elements was previously installed, uninstall it:"
-echo "     brew uninstall --cask karabiner-elements"
-echo ""
-echo "2. Grant Permissions in macOS System Settings:"
-echo "   • Privacy & Security -> Input Monitoring  -> Enable 'kanata'"
-echo "   • Privacy & Security -> Accessibility     -> Enable 'kanata'"
-echo ""
-echo "3. Run live test:"
+echo "Run live test:"
 echo "     make test"
 echo "========================================================"
