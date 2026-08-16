@@ -27,9 +27,9 @@ else
     echo "✅ Kanata is installed: $(kanata --version)"
 fi
 
-# 3. Download & Install Standalone VirtualHIDDevice Driver
+# 3. Clean up stale tmp sockets & Install Standalone VirtualHIDDevice Driver
 echo ""
-echo "🔍 Installing Standalone Karabiner DriverKit VirtualHIDDevice driver..."
+echo "🔍 Setting up Standalone Karabiner DriverKit VirtualHIDDevice driver..."
 if [ ! -f "$PKG_TMP" ]; then
     echo "📦 Downloading driver package..."
     curl -sL "$DRIVER_PKG_URL" -o "$PKG_TMP"
@@ -37,6 +37,10 @@ fi
 
 echo "📦 Installing driver package (sudo required)..."
 sudo installer -pkg "$PKG_TMP" -target /
+
+echo "🧹 Cleaning up stale socket files..."
+sudo rm -rf "/Library/Application Support/org.pqrs/tmp" || true
+sudo killall -9 Karabiner-VirtualHIDDevice-Daemon 2>/dev/null || true
 
 # 4. Activate Virtual Driver
 echo ""
