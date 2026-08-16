@@ -41,11 +41,11 @@ Vim navigation, word jumping, and forward delete right at your fingertips withou
 | Key | Action | Purpose |
 | :--- | :--- | :--- |
 | **`H` `J` `K` `L`** | `←` `↓` `↑` `→` | Full directional navigation |
+| **`Backspace`** | `Forward Delete` | Forward delete character (missing on MacBook) |
 | **`Y`** | `Home` | Jump to start of line / document |
 | **`O`** | `End` | Jump to end of line / document |
 | **`U`** | `Page Down` | Scroll down |
 | **`I`** | `Page Up` | Scroll up |
-| **`Backspace`** | `Forward Delete` | Delete character in front of cursor |
 | **`A` `S` `D` `F`** | `Cmd` `Alt` `Shift` `Ctrl` | Modifiers for one-hand selection and jumping |
 
 > **Text Selection Pro-Tip**:
@@ -73,43 +73,49 @@ Turns the right hand into a standard 10-key numpad and provides common programmi
 
 ---
 
-## 🚀 Quick Start & Management
+## 🚀 Installation & Setup
 
 ### Prerequisites
 * [Homebrew](https://brew.sh)
-* Karabiner VirtualHIDDevice Driver (installed via `brew install --cask karabiner-elements`)
 
-### First-Time Setup
-Run the setup script from the repo directory:
+### First-Time Installation
+Clone and run the automated setup:
 ```bash
+cd ~/silentcastle/projects/kanata-conf
 make install
 ```
 
-### macOS System Permissions
-1. Open **System Settings > Privacy & Security > Input Monitoring**:
-   * Enable `kanata` and `Karabiner`.
-2. Open **System Settings > Privacy & Security > Accessibility**:
-   * Enable `kanata` and `Karabiner`.
+`make install` automatically:
+1. Installs `kanata` via Homebrew.
+2. Installs the standalone `Karabiner-DriverKit-VirtualHIDDevice` (v6.2.0).
+3. Configures the system `LaunchDaemon` for driver communication.
+4. Symlinks `~/.config/kanata/kanata.kbd` to this repo.
+5. Validates syntax and starts the background service.
+
+### macOS Permissions
+Ensure permissions are enabled under **System Settings > Privacy & Security**:
+* **Input Monitoring**: Toggle **ON** for `kanata`.
+* **Accessibility**: Toggle **ON** for `kanata`.
 
 ---
 
 ## 🛠️ Daily Workflow Commands
 
 ```bash
-# Test in foreground with live layer change logging (Ctrl+C to exit)
-make test
-
-# Start background service on boot
-make start
-
-# Restart / reload background service after updating config
+# Restart / reload background service after editing kanata.kbd
 make reload
+
+# Check background daemon status & health
+make status
 
 # Stop the background service
 make stop
 
-# Check background daemon status
-make status
+# Start the background service
+make start
+
+# Test in foreground with live layer change logs
+make test
 ```
 
 ---
