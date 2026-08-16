@@ -99,6 +99,20 @@ Ensure permissions are enabled under **System Settings > Privacy & Security**:
 
 ---
 
+## 🧩 DriverKit & Kanata Compatibility Matrix
+
+Kanata communicates with the Karabiner DriverKit system extension via an internal IPC client protocol. DriverKit versions must match Kanata's compiled protocol version (documented in [Kanata macOS Setup Guide](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md#2-install-karabiner-driverkit-virtualhiddevice)):
+
+| Kanata Version | IPC Protocol | Required Karabiner DriverKit | Notes |
+| :--- | :--- | :--- | :--- |
+| **`v1.12.x` and below** | Protocol 5 | **`v6.2.0`** | Current Homebrew stable version |
+| **`v1.13.0` and above** | Protocol 7 | **`v8.0.0` / `v8.2.0`+** | Uses updated `karabiner-driverkit` crate |
+
+> [!NOTE]
+> `make install` (`setup.sh`) automatically detects your installed Kanata version (`kanata --version`) and downloads the exact matching DriverKit package without manual intervention.
+
+---
+
 ## 🛠️ Daily Workflow Commands
 
 ```bash
