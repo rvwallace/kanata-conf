@@ -97,9 +97,15 @@ make install
 5. Checks configuration syntax and starts the background service.
 
 ### macOS Permissions
-Enable these permissions in **System Settings > Privacy & Security**:
-* **Input Monitoring**: Turn **ON** for `kanata`.
-* **Accessibility**: Turn **ON** for `kanata`.
+Kanata requires two permissions in **System Settings > Privacy & Security** (run `make permissions` to auto-open these panes):
+
+1. **Input Monitoring** (`Privacy & Security > Input Monitoring`):
+   * Toggle **`kanata`** to **ON** (blue).
+   * *If `kanata` is not listed:* Click `+`, press <kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd>, paste `/opt/homebrew/bin/kanata`, click **Open**, and toggle it **ON**.
+2. **Accessibility** (`Privacy & Security > Accessibility`):
+   * Ensure **`kanata`** is toggled **ON**.
+
+Once granted, start or reload the background service with `make start` or `make reload`.
 
 ---
 

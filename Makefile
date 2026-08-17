@@ -24,7 +24,9 @@ install:
 	./setup.sh
 
 permissions:
-	kanata --macos-request-permissions
+	@kanata --macos-request-permissions || true
+	@open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent" 2>/dev/null || true
+	@open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility" 2>/dev/null || true
 
 link:
 	@mkdir -p $(CONFIG_DIR)
@@ -39,7 +41,7 @@ test: link check
 	sudo kanata --cfg $(SRC_FILE) --log-layer-changes
 
 start: link check
-	sudo brew services start kanata
+	sudo brew services restart kanata
 
 stop:
 	sudo brew services stop kanata
