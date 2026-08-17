@@ -9,7 +9,16 @@
 )
 
 ;; -----------------------------------------------------------------------------
-;; 1. Source Keys (Physical layout to intercept)
+;; 1. Variables & Timing (Centralized for easy tuning)
+;; -----------------------------------------------------------------------------
+(defvar
+  tap-time        180
+  hold-time       200
+  space-hold-time 230
+)
+
+;; -----------------------------------------------------------------------------
+;; 2. Source Keys (Physical layout to intercept)
 ;; -----------------------------------------------------------------------------
 (defsrc
   grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
@@ -20,17 +29,18 @@
 )
 
 ;; -----------------------------------------------------------------------------
-;; 2. Aliases for Tap-Hold Actions, Layers, and Shifted Symbols
+;; 3. Aliases
 ;; -----------------------------------------------------------------------------
 (defalias
-  ;; Caps Lock: Tap for Escape, Hold for Navigation Layer
-  nav (tap-hold 180 180 esc (layer-toggle nav))
+  ;; Caps Lock: Tap for Esc, Double-Tap for CapsLock, Hold for Nav Layer
+  caps-dance (tap-dance 200 (esc caps))
+  caps-nav   (tap-hold $tap-time $hold-time @caps-dance (layer-while-held nav))
 
-  ;; Tab: Tap for Tab, Hold for Hyper Key (Cmd + Option + Ctrl + Shift)
-  hyp (tap-hold 200 200 tab (multi lmet lalt lctl lsft))
+  ;; Tab: Tap for Tab, Hold for Hyper (Cmd + Option + Ctrl + Shift)
+  tab-hyper  (tap-hold $tap-time $hold-time tab (multi lmet lalt lctl lsft))
 
-  ;; Space: Tap for Space, Hold for Numpad & Symbols Layer
-  spc-num (tap-hold-press 200 200 spc (layer-toggle num))
+  ;; Space: Tap for Space, Hold for Numpad/Symbols Layer
+  space-num  (tap-hold-release $space-hold-time $space-hold-time spc (layer-while-held num))
 
   ;; Symbol Aliases
   excl S-1
@@ -49,37 +59,35 @@
 )
 
 ;; -----------------------------------------------------------------------------
-;; 3. Base Layer (Default typing layer)
+;; 4. Base Layer (Default typing layer)
 ;; -----------------------------------------------------------------------------
 (deflayer base
-  grv   1    2    3    4    5    6    7    8    9    0    -    =    bspc
-  @hyp  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  @nav  a    s    d    f    g    h    j    k    l    ;    '    ret
-  lsft  z    x    c    v    b    n    m    ,    .    /    rsft
-  lctl  lalt lmet          @spc-num       rmet ralt
+  grv        1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  @tab-hyper q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @caps-nav  a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft       z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl       lalt lmet          @space-num       rmet ralt
 )
 
 ;; -----------------------------------------------------------------------------
-;; 4. Navigation Layer (Active while holding Caps Lock)
+;; 5. Navigation & Editing Layer (Active while holding Caps Lock)
 ;; -----------------------------------------------------------------------------
-;; - HJKL: Vim-style arrow navigation
-;; - YUIO: Home, PgDn, PgUp, End
+;; - HJKL: Arrow keys
+;; - UIOP: Home, PgDn, PgUp, End
+;; - ASDF: Left-hand modifiers (Ctrl, Option, Cmd, Shift) optimized for Mac navigation
+;; - ZXCV: macOS Editing shortcuts (Undo, Cut, Copy, Paste)
 ;; - Backspace: Forward Delete
-;; - ASDF: Left-hand modifiers (Cmd, Alt, Shift, Ctrl) for easy text selection
 (deflayer nav
   _     _    _    _    _    _    _    _    _    _    _    _    _    del
-  _     _    _    _    _    _    home pgdn pgup end  _    _    _    _
-  _     lmet lalt lsft lctl _    left down up   rght _    _    _
-  _     _    _    _    _    _    _    _    _    _    _    _
+  _     _    _    _    _    _    _    home pgdn pgup end  _    _    _
+  _     lctl lalt lmet lsft _    left down up   rght _    _    _
+  _     M-z  M-x  M-c  M-v  _    _    _    _    _    _    _
   _     _    _              _              _    _
 )
 
 ;; -----------------------------------------------------------------------------
-;; 5. Numpad & Symbols Layer (Active while holding Space)
+;; 6. Numpad & Symbols Layer (Active while holding Space)
 ;; -----------------------------------------------------------------------------
-;; - Right Hand: 10-key numeric keypad (789 on UIO, 456 on JKL, 123 on M,, 0 on N)
-;; - Right Edge: Math operators (+ on P, - on [, * on ;, / on ', = on Enter)
-;; - Left Hand: Common programming symbols (!@#$% on QWERT, ^&*() on ASDFG, ~`[] on ZXCV)
 (deflayer num
   _     _      _    _     _     _     _    _    _    _    _     _    _    _
   _     @excl  @at  @hash @dllr @prct _    7    8    9    @plus -    _    _

@@ -10,8 +10,9 @@ This repository houses a declarative [Kanata](https://github.com/jtroo/kanata) k
 
 ### 1. Base Layer (Default)
 
-* **`Caps Lock` Dual Function**:
-  * **Tap**: `Escape`
+* **`Caps Lock` Triple Function**:
+  * **Single Tap**: `Escape`
+  * **Double Tap**: `Caps Lock` toggle
   * **Hold**: Activates **Navigation Layer**
 * **`Tab` Dual Function**:
   * **Tap**: `Tab`
@@ -22,36 +23,35 @@ This repository houses a declarative [Kanata](https://github.com/jtroo/kanata) k
 
 ---
 
-### 2. Navigation Layer (Hold `Caps Lock`)
+### 2. Navigation & Editing Layer (Hold `Caps Lock`)
 
-Vim navigation, word jumping, and forward delete right at your fingertips without leaving the home row.
+Vim navigation, dedicated scrolling, macOS text selection modifiers, and clipboard shortcuts without leaving the home row.
 
 ```text
 ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───────┐
 │   │   │   │   │   │   │   │   │   │   │   │   │   │  DEL  │
 ├───┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─┴─┬─────┤
-│     │   │   │   │   │   │HOM│PGD│PGU│END│   │   │   │     │
+│     │   │   │   │   │   │   │HOM│PGD│PGU│END│   │   │     │
 ├─────┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴┬──┴─────┤
-│[HOLD]│CMD│ALT│SFT│CTL│   │ ← │ ↓ │ ↑ │ → │   │   │       │
+│[HOLD]│CTL│ALT│CMD│SFT│   │ ← │ ↓ │ ↑ │ → │   │   │       │
 ├──────┴─┬─┴──┬┴──┬┴──┬┴──┬┴──┬┴──┬┴──┬┴──┬┴──┬┴──┬┴───────┤
-│        │    │   │   │   │   │   │   │   │   │   │        │
+│        │ UND│CUT│CPY│PST│   │   │   │   │   │   │        │
 └────────┴────┴───┴───┴───┴───┴───┴───┴───┴───┴───┴────────┘
 ```
 
 | Key | Action | Purpose |
 | :--- | :--- | :--- |
 | **`H` `J` `K` `L`** | `←` `↓` `↑` `→` | Full directional navigation |
+| **`U` `I` `O` `P`** | `Home` `PgDn` `PgUp` `End` | Dedicated document and scroll navigation |
+| **`A` `S` `D` `F`** | `Ctrl` `Alt` `Cmd` `Shift` | Modifiers optimized for macOS text selection |
+| **`Z` `X` `C` `V`** | `Cmd+Z` `Cmd+X` `Cmd+C` `Cmd+V` | macOS Undo, Cut, Copy, Paste shortcuts |
 | **`Backspace`** | `Forward Delete` | Forward delete character (missing on MacBook) |
-| **`Y`** | `Home` | Jump to start of line / document |
-| **`O`** | `End` | Jump to end of line / document |
-| **`U`** | `Page Down` | Scroll down |
-| **`I`** | `Page Up` | Scroll up |
-| **`A` `S` `D` `F`** | `Cmd` `Alt` `Shift` `Ctrl` | Modifiers for one-hand selection and jumping |
 
 > **Text Selection Pro-Tip**:
-> * `Caps (Hold)` + `D` (Shift) + `L` $\rightarrow$ Select characters right.
+> * `Caps (Hold)` + `F` (Shift) + `L` $\rightarrow$ Select characters right.
 > * `Caps (Hold)` + `S` (Alt) + `L` $\rightarrow$ Jump forward one word.
-> * `Caps (Hold)` + `S` + `D` + `L` $\rightarrow$ Select word by word.
+> * `Caps (Hold)` + `D` (Cmd) + `L` $\rightarrow$ Jump to end of line.
+> * `Caps (Hold)` + `D` + `F` (Cmd+Shift) + `L` $\rightarrow$ Select to end of line with index + middle fingers.
 
 ---
 
@@ -137,5 +137,5 @@ make test
 ## ⚙️ Customization
 
 Edit [`kanata.kbd`](./kanata.kbd) to adjust tap-hold timings or reassign keys:
-* **Tap-Hold Timings**: Defaults are `180ms` for Caps Lock and `200ms` for Space/Tab. Increase to `220ms` if you accidentally trigger layers during fast typing.
-* **Symlink**: `~/.config/kanata/kanata.kbd` links directly to `kanata.kbd` in this repository.
+* **Tap-Hold Timings (`defvar`)**: Easily tweak `tap-time` (180ms), `hold-time` (200ms), and `space-hold-time` (230ms) directly in the `(defvar ...)` block at the top of [`kanata.kbd`](./kanata.kbd).
+* **Symlink**: `~/.config/kanata/kanata.kbd` links directly to `kanata.kbd` in this repository (`make link`).
