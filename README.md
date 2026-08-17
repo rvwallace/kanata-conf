@@ -1,8 +1,8 @@
 # kanata-conf
 
-> Unified, cross-keyboard layout configuration for macOS (built-in MacBook keyboard & NuPhy Air75).
+> Unified keyboard configuration for macOS (MacBook built-in keyboard and NuPhy Air75).
 
-This repository houses a declarative [Kanata](https://github.com/jtroo/kanata) keyboard mapping that runs identically across internal laptop keyboards and external mechanical keyboards, preserving muscle memory across all workflows.
+This repository contains a [Kanata](https://github.com/jtroo/kanata) configuration for macOS. It maps keys identically across internal laptop keyboards and external keyboards.
 
 ---
 
@@ -10,16 +10,16 @@ This repository houses a declarative [Kanata](https://github.com/jtroo/kanata) k
 
 ### 1. Base Layer (Default)
 
-* **`Caps Lock` Triple Function**:
-  * **Single Tap**: `Escape`
-  * **Double Tap**: `Caps Lock` toggle
-  * **Hold**: Activates **Navigation Layer**
-* **`Tab` Dual Function**:
+* **`Caps Lock`**:
+  * **Tap**: `Escape`
+  * **Double Tap**: `Caps Lock`
+  * **Hold**: Navigation & Editing Layer
+* **`Tab`**:
   * **Tap**: `Tab`
-  * **Hold**: **Hyper Key** (`Cmd + Option + Ctrl + Shift`) for window management / Raycast hotkeys
-* **`Space` Dual Function**:
+  * **Hold**: Hyper Key (`Cmd + Option + Ctrl + Shift`)
+* **`Space`**:
   * **Tap**: `Space`
-  * **Hold**: Activates **Numpad & Symbols Layer**
+  * **Hold**: Numpad & Symbols Layer
 
 ---
 
@@ -43,23 +43,23 @@ Vim navigation, dedicated scrolling, macOS text selection modifiers, and clipboa
 
 | Key | Action | Purpose |
 | :--- | :--- | :--- |
-| **`H` `J` `K` `L`** | `←` `↓` `↑` `→` | Full directional navigation |
-| **`U` `I` `O` `P`** | `Home` `PgDn` `PgUp` `End` | Dedicated document and scroll navigation |
-| **`A` `S` `D` `F`** | `Ctrl` `Alt` `Cmd` `Shift` | Modifiers optimized for macOS text selection |
-| **`Z` `X` `C` `V`** | `Cmd+Z` `Cmd+X` `Cmd+C` `Cmd+V` | macOS Undo, Cut, Copy, Paste shortcuts |
-| **`Backspace`** | `Forward Delete` | Forward delete character (missing on MacBook) |
+| **`H` `J` `K` `L`** | `←` `↓` `↑` `→` | Directional navigation |
+| **`U` `I` `O` `P`** | `Home` `PgDn` `PgUp` `End` | Document and scroll navigation |
+| **`A` `S` `D` `F`** | `Ctrl` `Alt` `Cmd` `Shift` | Modifiers for macOS text selection |
+| **`Z` `X` `C` `V`** | `Cmd+Z` `Cmd+X` `Cmd+C` `Cmd+V` | Undo, Cut, Copy, and Paste shortcuts |
+| **`Backspace`** | `Forward Delete` | Forward delete character |
 
-> **Text Selection Pro-Tip**:
+> **Text Selection**:
 > * `Caps (Hold)` + `F` (Shift) + `L` $\rightarrow$ Select characters right.
-> * `Caps (Hold)` + `S` (Alt) + `L` $\rightarrow$ Jump forward one word.
-> * `Caps (Hold)` + `D` (Cmd) + `L` $\rightarrow$ Jump to end of line.
-> * `Caps (Hold)` + `D` + `F` (Cmd+Shift) + `L` $\rightarrow$ Select to end of line with index + middle fingers.
+> * `Caps (Hold)` + `S` (Alt) + `L` $\rightarrow$ Move forward one word.
+> * `Caps (Hold)` + `D` (Cmd) + `L` $\rightarrow$ Move to end of line.
+> * `Caps (Hold)` + `D` + `F` (Cmd+Shift) + `L` $\rightarrow$ Select to end of line with index and middle fingers.
 
 ---
 
 ### 3. Numpad & Symbols Layer (Hold `Space`)
 
-Turns the right hand into a standard 10-key numpad and provides common programming symbols on the left hand.
+A 10-key numeric keypad on the right hand and common programming symbols on the left hand.
 
 ```text
 ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────────┐
@@ -83,47 +83,47 @@ Turns the right hand into a standard 10-key numpad and provides common programmi
 * [Homebrew](https://brew.sh)
 
 ### First-Time Installation
-Clone and run the automated setup:
+Clone the repository and run setup:
 ```bash
 cd ~/silentcastle/projects/kanata-conf
 make install
 ```
 
-`make install` automatically:
-1. Installs `kanata` via Homebrew.
-2. Installs the standalone `Karabiner-DriverKit-VirtualHIDDevice` (v6.2.0).
-3. Configures the system `LaunchDaemon` for driver communication.
-4. Symlinks `~/.config/kanata/kanata.kbd` to this repo.
-5. Validates syntax and starts the background service.
+`make install` performs these setup steps:
+1. Installs `kanata` with Homebrew.
+2. Installs the matching `Karabiner-DriverKit-VirtualHIDDevice` package.
+3. Sets up the system `LaunchDaemon` for driver communication.
+4. Symlinks `~/.config/kanata/kanata.kbd` to this repository.
+5. Checks configuration syntax and starts the background service.
 
 ### macOS Permissions
-Ensure permissions are enabled under **System Settings > Privacy & Security**:
-* **Input Monitoring**: Toggle **ON** for `kanata`.
-* **Accessibility**: Toggle **ON** for `kanata`.
+Enable these permissions in **System Settings > Privacy & Security**:
+* **Input Monitoring**: Turn **ON** for `kanata`.
+* **Accessibility**: Turn **ON** for `kanata`.
 
 ---
 
 ## 🧩 DriverKit & Kanata Compatibility Matrix
 
-Kanata communicates with the Karabiner DriverKit system extension via an internal IPC client protocol. DriverKit versions must match Kanata's compiled protocol version (documented in [Kanata macOS Setup Guide](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md#2-install-karabiner-driverkit-virtualhiddevice)):
+Kanata communicates with the Karabiner DriverKit extension through an internal IPC protocol. The DriverKit version must match the protocol version in Kanata. See the [Kanata macOS Setup Guide](https://github.com/jtroo/kanata/blob/main/docs/setup-macos.md#2-install-karabiner-driverkit-virtualhiddevice):
 
 | Kanata Version | IPC Protocol | Required Karabiner DriverKit | Notes |
 | :--- | :--- | :--- | :--- |
-| **`v1.12.x` and below** | Protocol 5 | **`v6.2.0`** | Current Homebrew stable version |
+| **`v1.12.x` and below** | Protocol 5 | **`v6.2.0`** | Homebrew stable version |
 | **`v1.13.0` and above** | Protocol 7 | **`v8.0.0` / `v8.2.0`+** | Uses updated `karabiner-driverkit` crate |
 
 > [!NOTE]
-> `make install` (`setup.sh`) automatically detects your installed Kanata version (`kanata --version`) and downloads the exact matching DriverKit package without manual intervention.
+> The `setup.sh` script detects your installed `kanata` version and downloads the matching DriverKit package automatically.
 
 ---
 
 ## 🛠️ Daily Workflow Commands
 
 ```bash
-# Restart / reload background service after editing kanata.kbd
+# Restart background service after editing kanata.kbd
 make reload
 
-# Check background daemon status & health
+# Check background daemon status
 make status
 
 # Stop the background service
@@ -140,6 +140,6 @@ make test
 
 ## ⚙️ Customization
 
-Edit [`kanata.kbd`](./kanata.kbd) to adjust tap-hold timings or reassign keys:
-* **Tap-Hold Timings (`defvar`)**: Easily tweak `tap-time` (180ms), `hold-time` (200ms), and `space-hold-time` (230ms) directly in the `(defvar ...)` block at the top of [`kanata.kbd`](./kanata.kbd).
-* **Symlink**: `~/.config/kanata/kanata.kbd` links directly to `kanata.kbd` in this repository (`make link`).
+Edit [`kanata.kbd`](./kanata.kbd) to change timings or key mappings:
+* **Tap-Hold Timings (`defvar`)**: Change `tap-time` (180ms), `hold-time` (200ms), and `space-hold-time` (230ms) in the `(defvar ...)` block at the top of [`kanata.kbd`](./kanata.kbd).
+* **Symlink**: Run `make link` to link `~/.config/kanata/kanata.kbd` to [`kanata.kbd`](./kanata.kbd) in this repository.
