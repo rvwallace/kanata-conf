@@ -92,10 +92,12 @@ mkdir -p "$CONFIG_DIR"
 ln -sf "$SRC_FILE" "$CONFIG_FILE"
 echo "   $SRC_FILE -> $CONFIG_FILE"
 
-# 8. Restart Kanata background service
+# 8. Trigger and guide macOS Permissions
 echo ""
-echo "🔄 Restarting Kanata service..."
-sudo brew services restart kanata
+echo "🔐 Triggering macOS Permission Requests..."
+kanata --macos-request-permissions 2>/dev/null || true
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent" 2>/dev/null || true
+open "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility" 2>/dev/null || true
 
 # 9. Validate Syntax
 echo ""
@@ -103,9 +105,27 @@ echo "🧪 Validating Kanata configuration syntax..."
 kanata --check -c "$CONFIG_FILE"
 echo "✅ Configuration syntax is valid!"
 
+# 10. Restart Kanata background service
+echo ""
+echo "🔄 Starting/Restarting Kanata service..."
+sudo brew services restart kanata
+
 echo ""
 echo "========================================================"
 echo "                  SETUP COMPLETE                        "
 echo "========================================================"
-echo "Kanata is running with DriverKit v${DRIVER_VER}."
+echo "Kanata is configured with DriverKit v${DRIVER_VER}."
+echo ""
+echo "⚠️  CRITICAL: macOS Permissions Required:"
+echo "   1. Input Monitoring:"
+echo "      - Open System Settings > Privacy & Security > Input Monitoring"
+echo "      - Toggle 'kanata' to ON (blue)."
+echo "      - If 'kanata' is not listed: Click '+', press Cmd+Shift+G,"
+echo "        paste '/opt/homebrew/bin/kanata', add it, and toggle ON."
+echo ""
+echo "   2. Accessibility:"
+echo "      - In System Settings > Privacy & Security > Accessibility"
+echo "      - Ensure 'kanata' is toggled ON."
+echo ""
+echo "   Once permissions are enabled, verify with: make status"
 echo "========================================================"
