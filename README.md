@@ -149,3 +149,10 @@ make test
 Edit [`kanata.kbd`](./kanata.kbd) to change timings or key mappings:
 * **Tap-Hold Timings (`defvar`)**: Change `tap-time` (180ms), `hold-time` (200ms), and `space-hold-time` (230ms) in the `(defvar ...)` block at the top of [`kanata.kbd`](./kanata.kbd).
 * **Symlink**: Run `make link` to link `~/.config/kanata/kanata.kbd` to [`kanata.kbd`](./kanata.kbd) in this repository.
+
+---
+
+## 📜 Changelog
+
+See [`CHANGELOG.md`](./CHANGELOG.md) for release history following Keep a Changelog.
+
